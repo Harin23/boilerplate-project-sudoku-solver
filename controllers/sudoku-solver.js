@@ -29,30 +29,68 @@ class SudokuSolver {
         }
       }
       if(solveable==false){
-        console.log("fail")
         return { error: 'Puzzle cannot be solved' };
       }else{
-        console.log("pass")
         return true;
       }
     }
   }
 
-  checkRowPlacement(puzzle, row, column, value) {
-
+  checkRowPlacement(puzzle, row, value) {
+    value = value.toString();
+    let start = (row-1)*9;
+    let rowArr = puzzle.slice(start, start+9).split('');
+    if(rowArr.indexOf(value)==-1){
+      return {valid: true};
+    }else{
+      return {valid : false, conflict: "row"};
+    }
   }
 
-  checkColPlacement(puzzle, row, column, value) {
+  checkColPlacement(puzzle, column, value) {
+    value = value.toString();
+    var col = [];
+    for(let i=column-1; i<=72+column; i=i+9){
+      col.push(puzzle[i]);
+    }
+    if(col.indexOf(value)==-1){
+      return {valid: true};
+    }else{
+      return {valid : false, conflict: "column"};
+    }
+  }
 
+  groupFinder(n){
+    if(n<=3){
+      return [0, 2];
+    }else if(n<=6){
+      return [3,5];
+    }else{
+      return [6,8];
+    }
   }
 
   checkRegionPlacement(puzzle, row, column, value) {
-
+    value = value.toString();
+    let rowGroup = this.groupFinder(row);
+    let colGroup = this.groupFinder(column);
+    let region = [];
+    for(var i=rowGroup[0]; i<=rowGroup[1]; i++){
+      let rowIndex = i*9;
+      for(var j=colGroup[0]; j<=colGroup[1]; j++){
+        region.push(puzzle[rowIndex+j]);
+      }
+    }
+    if(region.indexOf(value)==-1){
+      return {valid: true};
+    }else{
+      return {valid : false, conflict: "region"};
+    }
   }
 
   solve(puzzle) {
-    
   }
+  
 }
 
 module.exports = SudokuSolver;
