@@ -25,6 +25,7 @@ module.exports = function (app) {
             res.json(validate)
           }else{
             let safe=solver.checkSafe(puzzle, row, col, val);
+            // console.log(puzzle, row, col, val, safe)
             res.json(safe);
           }
         }

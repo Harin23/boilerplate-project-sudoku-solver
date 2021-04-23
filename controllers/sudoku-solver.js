@@ -160,7 +160,7 @@ class SudokuSolver {
       conflicts.push('row');
     }
     if(colCheck==false){
-      conflicts.push('col');
+      conflicts.push('column');
     }
     if(regCheck==false){
       conflicts.push('region');

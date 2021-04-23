@@ -5,6 +5,7 @@ const SudokuSolver = require('../controllers/sudoku-solver.js');
 let solver = new SudokuSolver();
 
 let puzzlesAndSolutions = require('../controllers/puzzle-strings.js').puzzlesAndSolutions;
+
 suite('UnitTests', () => {
  let testValue = solver.stringToMatrix('..9..5.1.85.4....2432......1...69.83.9.....6.62.71...9......1945....4.37.4.3..6..');
 
@@ -53,7 +54,7 @@ suite('UnitTests', () => {
       assert.isFalse(result.valid);
       assert.isArray(result.conflict)
       assert.equal(result.conflict[0], 'row')
-       assert.equal(result.conflict[1], 'col')
+       assert.equal(result.conflict[1], 'column')
     });
     test('Logic handles a valid region (3x3 grid) placement', ()=>{
   
