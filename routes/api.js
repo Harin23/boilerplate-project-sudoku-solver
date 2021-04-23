@@ -1,9 +1,8 @@
 'use strict';
-
 const SudokuSolver = require('../controllers/sudoku-solver.js');
 
 module.exports = function (app) {
-  
+
   let solver = new SudokuSolver();
 
   app.route('/api/check')
@@ -13,32 +12,23 @@ module.exports = function (app) {
       }else if(req.body.value.match(/[1-9]+/g) == null){
         res.json({ error: 'Invalid value' });
       }else{
-        let puzzle = req.body.puzzle;
-        let valid=solver.validate(puzzle);
-        if(valid!=true){
-          res.json(valid);
+        let coords = req.body.coordinate.split('');
+        if(coords.length>2 || coords[0].match(/[A-I]+/gi) == null || coords[1].match(/[1-9]+/g) == null){
+          res.json({ error: 'Invalid coordinate' });
         }else{
-          let coords = req.body.coordinate.split('');
-          if(coords.length>2 || coords[0].match(/[A-I]+/gi) == null || coords[1].match(/[1-9]+/g) == null){
-            res.json({ error: 'Invalid coordinate' });
+          let row = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'].indexOf(coords[0].toLowerCase())+1
+          let col = parseInt(coords[1]);
+          let val =  parseInt(req.body.value);
+          let puzzle = req.body.puzzle;
+          let validate=solver.validate(puzzle);
+          if(validate !== true){
+            res.json(validate)
           }else{
-            let value = req.body.value;
-            let column = parseInt(coords[1]);
-            let row = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'].indexOf(coords[0].toLowerCase())
-            let rowCheck = solver.checkRowPlacement(puzzle, row, value);
-            if(rowCheck.valid==false){
-              res.json(rowCheck);
-            }else{
-              let colCheck = solver.checkColPlacement(puzzle, column, value);
-              if(colCheck.valid==false){
-                res.json(colCheck);
-              }else{
-                let regionCheck = solver.checkRegionPlacement(puzzle, row, column, value);
-                res.json(regionCheck);
-              }
-            }
+            let safe=solver.checkSafe(puzzle, row, col, val);
+            res.json(safe);
           }
         }
+
       }
     });
     
@@ -49,10 +39,11 @@ module.exports = function (app) {
       }else{
         let puzzle = req.body.puzzle;
         let valid=solver.validate(puzzle);
-        if(valid!=true){
+        if(valid!==true){
           res.json(valid);
         }else{
-          res.json({solved: "true"})
+          let solution = solver.solve(puzzle);
+          res.json(solution);
         }
       }
 
